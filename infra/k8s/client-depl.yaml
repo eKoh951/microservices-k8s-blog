@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: client-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: client' label
+      app: client
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: client'
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: ekoh95/client
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-clusterip-srv
+spec:
+  selector:
+    app: client
+  ports:
+    - name: client
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: event-bus-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: event-bus' label
+      app: event-bus
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: event-bus'
+        app: event-bus
+    spec:
+      containers:
+        - name: event-bus
+          image: ekoh95/event-bus
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus-srv
+spec:
+  selector:
+    app: event-bus
+  ports:
+    - name: event-bus
+      protocol: TCP
+      port: 4005
+      targetPort: 4005

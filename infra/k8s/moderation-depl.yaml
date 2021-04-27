@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: comments-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: comments' label
+      app: comments
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: comments'
+        app: comments
+    spec:
+      containers:
+        - name: comments
+          image: ekoh95/comments
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-clusterip-srv
+spec:
+  selector:
+    app: comments
+  ports:
+    - name: comments
+      protocol: TCP
+      port: 4001
+      targetPort: 4001

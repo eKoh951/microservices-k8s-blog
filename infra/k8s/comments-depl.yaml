@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: moderation-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: moderation' label
+      app: moderation
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: moderation'
+        app: moderation
+    spec:
+      containers:
+        - name: moderation
+          image: ekoh95/moderation
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-clusterip-srv
+spec:
+  selector:
+    app: moderation
+  ports:
+    - name: moderation
+      protocol: TCP
+      port: 4003
+      targetPort: 4003

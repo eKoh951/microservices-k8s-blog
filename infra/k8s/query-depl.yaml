@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: query-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: query' label
+      app: query
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: query'
+        app: query
+    spec:
+      containers:
+        - name: query
+          image: ekoh95/query
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-clusterip-srv
+spec:
+  selector:
+    app: query
+  ports:
+    - name: query
+      protocol: TCP
+      port: 4002
+      targetPort: 4002

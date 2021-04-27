@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations: # This serves to ingress to know that it will be fed with routing files
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/use-regex: "true" # To be able to use regular expressions
+spec:
+  rules: # These are rules for the ingress controller to manage the incoming traffic to the different pods
+    - host: posts.com
+      http:
+        paths:
+          - path: /posts/create # This is the route for the posts service we defined in index.js
+            pathType: Prefix
+            backend:
+              service:
+                name: posts-clusterip-srv # The name for the clusterIP for this service
+                port:
+                  number: 4000
+          - path: /posts # This is the route for the posts service we defined in index.js
+            pathType: Prefix
+            backend:
+              service:
+                name: query-clusterip-srv # The name for the clusterIP for this service
+                port:
+                  number: 4002
+          - path: /posts/?(.*)/comments # ?(.*) is a regular expression
+            pathType: Prefix
+            backend:
+              service:
+                name: comments-clusterip-srv # The name for the clusterIP for this service
+                port:
+                  number: 4001
+          - path: /?(.*) # To match the react routes and it has to be at the very end, it is like express routing
+            pathType: Prefix
+            backend:
+              service:
+                name: client-clusterip-srv # The name for the clusterIP for this service
+                port:
+                  number: 3000

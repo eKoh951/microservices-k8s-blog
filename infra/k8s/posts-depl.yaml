@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # The type of 'object'
+metadata:
+  name: posts-depl
+spec: # How the deployment should behave
+  replicas: 1 # Number of pods running an image
+  selector: # Tells the deployment which Pods should manage
+    matchLabels: # Manage the pods with the 'app: posts' label
+      app: posts
+  template: # We create the configuration for the pod
+    metadata:
+      labels: # Set the label 'app: posts'
+        app: posts
+    spec:
+      containers:
+        - name: posts
+          image: ekoh95/posts
+---
+# Service configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-clusterip-srv
+spec:
+  selector:
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
